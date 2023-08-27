@@ -33,4 +33,32 @@ X_scaled = pd.DataFrame(data=X_scaled, index=X_num.index, columns=X_num.columns)
 
 X = pd.concat([X_scaled, X_cat], axis=1)
 
-print(X.head())
+
+# train, test data Separation
+from sklearn.model_selection import train_test_split
+train_input, test_input, train_target, test_target = train_test_split(X, y, test_size=0.3, random_state=1)
+
+
+# Classification 모델 학습하기
+from sklearn.linear_model import LogisticRegression
+model_lr = LogisticRegression(max_iter=1000)
+model_lr.fit(train_input, train_target)
+
+# Classification 모델 학습 결과
+from sklearn.metrics import classification_report
+pred = model_lr.predict(test_input)
+# print(classification_report(test_target, pred))
+
+# XGBoost 모델 생성 & 학습
+from xgboost import XGBClassifier
+model_xgb = XGBClassifier()
+model_xgb.fit(train_input, train_target)
+
+pred = model_xgb.predict(test_input)
+# print(classification_report(test_target, pred))
+
+# 특징의 중요도 확인하기
+# XGBClassifier 모델의 feature_importances_를 이용하여 중요도 plot
+plt.bar(X.columns, model_xgb.feature_importances_)
+plt.xticks(rotation=90)
+plt.show()
